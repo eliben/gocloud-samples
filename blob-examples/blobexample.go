@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
+	"cloud.google.com/go/storage"
+	"gocloud.dev/blob"
 	"gocloud.dev/blob/gcsblob"
 	"gocloud.dev/gcp"
 )
 
-func main() {
+func full() {
 	ctx := context.Background()
 	creds, err := gcp.DefaultCredentials(ctx)
 	if err != nil {
@@ -30,11 +31,47 @@ func main() {
 		log.Fatal("OpenBucket", err)
 	}
 
+	var gcsClient *storage.Client
+	if b.As(&gcsClient) {
+		email, err := gcsClient.ServiceAccount(ctx, "eliben-test1")
+		if err != nil {
+			log.Fatal("ServiceAccount", err)
+		}
+		log.Println("email", email)
+	} else {
+		log.Fatal("Unable to access storage.Client through Bucket.As")
+	}
+
 	// Now we can use b to read or write files to the container.
 	data, err := b.ReadAll(ctx, "gopher.png")
 	if err != nil {
 		log.Fatal("ReadAll", err)
 	}
 
-	fmt.Println(data)
+	log.Println(len(data))
+}
+
+func url() {
+	ctx := context.Background()
+
+	b, err := blob.OpenBucket(ctx, "gs://eliben-test-bucket")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var gcsClient *storage.Client
+	if b.As(&gcsClient) {
+		email, err := gcsClient.ServiceAccount(ctx, "eliben-test1")
+		if err != nil {
+			log.Fatal("ServiceAccount", err)
+		}
+		log.Println("email", email)
+	} else {
+		log.Fatal("Unable to access storage.Client through Bucket.As")
+	}
+}
+
+func main() {
+	full()
+	url()
 }
