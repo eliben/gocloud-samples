@@ -148,7 +148,26 @@ func listopt() {
 		}
 		fmt.Println(obj.Key)
 	}
+}
 
+func reader() {
+	ctx := context.Background()
+
+	b, err := blob.OpenBucket(ctx, "gs://eliben-test-bucket")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r, err := b.NewReader(ctx, "gopher.png", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer r.Close()
+
+	var sr storage.Reader
+	if r.As(&sr) {
+		fmt.Println(sr.Attrs)
+	}
 }
 
 func main() {
@@ -156,5 +175,6 @@ func main() {
 	//url()
 	//errortype()
 	//list()
-	listopt()
+	//listopt()
+	reader()
 }
