@@ -121,9 +121,40 @@ func list() {
 	}
 }
 
+func listopt() {
+	ctx := context.Background()
+
+	b, err := blob.OpenBucket(ctx, "gs://eliben-test-bucket")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	beforeList := func(as func(interface{}) bool) error {
+		var q *storage.Query
+		if as(&q) {
+			fmt.Println(q.Delimiter)
+		}
+		return nil
+	}
+
+	iter := b.List(&blob.ListOptions{Prefix: "", Delimiter: "/", BeforeList: beforeList})
+	for {
+		obj, err := iter.Next(ctx)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(obj.Key)
+	}
+
+}
+
 func main() {
 	//full()
 	//url()
 	//errortype()
-	list()
+	//list()
+	listopt()
 }
