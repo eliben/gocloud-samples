@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"log"
 
 	"cloud.google.com/go/storage"
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/gcsblob"
 	"gocloud.dev/gcp"
+	"google.golang.org/api/googleapi"
 )
 
 func full() {
@@ -71,7 +74,56 @@ func url() {
 	}
 }
 
+func errortype() {
+	ctx := context.Background()
+
+	b, err := blob.OpenBucket(ctx, "gs://eliben-test-bucket")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Try read a file that doesn't exist
+	_, err = b.ReadAll(ctx, "XOXOXO")
+	if err != nil {
+		log.Printf("ReadAll %v %T\n", err, err)
+
+		var gError *googleapi.Error
+		if b.ErrorAs(err, &gError) {
+			log.Printf("Converted to %T: %v\n", *gError, *gError)
+		} else {
+			log.Printf("Failed to convert to specific error\n")
+		}
+	}
+}
+
+func list() {
+	ctx := context.Background()
+
+	b, err := blob.OpenBucket(ctx, "gs://eliben-test-bucket")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	iter := b.List(nil)
+	for {
+		obj, err := iter.Next(ctx)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(obj.Key)
+		var oa storage.ObjectAttrs
+		if obj.As(&oa) {
+			fmt.Println(oa.Owner)
+		}
+	}
+}
+
 func main() {
-	full()
-	url()
+	//full()
+	//url()
+	//errortype()
+	list()
 }
