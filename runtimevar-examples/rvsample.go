@@ -7,6 +7,7 @@ import (
 
 	"gocloud.dev/runtimevar"
 	_ "gocloud.dev/runtimevar/runtimeconfigurator"
+	runtimeconfig "google.golang.org/genproto/googleapis/cloud/runtimeconfig/v1beta1"
 )
 
 func main() {
@@ -17,5 +18,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(v)
+	s, err := v.Latest(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(s.Value)
+
+	var rcv *runtimeconfig.Variable
+	if s.As(&rcv) {
+		fmt.Println(rcv.UpdateTime)
+	}
 }
