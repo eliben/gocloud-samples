@@ -7,8 +7,10 @@ import (
 	"log"
 
 	"cloud.google.com/go/storage"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/gcsblob"
+	_ "gocloud.dev/blob/s3blob"
 	"gocloud.dev/gcp"
 	"google.golang.org/api/googleapi"
 )
@@ -211,6 +213,23 @@ func writeopt() {
 	}
 }
 
+func aserror() {
+	ctx := context.Background()
+
+	b, err := blob.OpenBucket(ctx, "s3://eliben-testing")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = b.ReadAll(ctx, "nosuchfile")
+	if err != nil {
+		var awsErr awserr.Error
+		if b.ErrorAs(err, &awsErr) {
+			fmt.Println(awsErr.Code())
+		}
+	}
+}
+
 func main() {
 	//full()
 	//url()
@@ -219,5 +238,6 @@ func main() {
 	//listopt()
 	//reader()
 	//attrs()
-	writeopt()
+	//writeopt()
+	aserror()
 }
