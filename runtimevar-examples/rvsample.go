@@ -13,7 +13,7 @@ import (
 
 func snpsht() {
 	ctx := context.Background()
-	v, err := runtimevar.OpenVariable(ctx, "runtimeconfigurator://eliben-test1/eliben-testconfig/key1?decoder=string")
+	v, err := runtimevar.OpenVariable(ctx, "runtimeconfigurator://eliben-test1/eliben-testconfig/key1")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,7 +33,7 @@ func snpsht() {
 
 func erroras() {
 	ctx := context.Background()
-	v, err := runtimevar.OpenVariable(ctx, "runtimeconfigurator://eliben-test1/eliben-teconfig/key1?decoder=string")
+	v, err := runtimevar.OpenVariable(ctx, "runtimeconfigurator://eliben-test1/eliben-teconfig/key1g")
 	if err != nil {
 		log.Fatal(err)
 	}
