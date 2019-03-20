@@ -77,11 +77,57 @@ func suberroras() {
 	msg.Ack()
 }
 
+func send() {
+	ctx := context.Background()
+	topic, err := pubsub.OpenTopic(ctx, "gcppubsub://eliben-test1/test1")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = topic.Send(ctx, &pubsub.Message{Body: []byte("hello")})
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func topicas() {
+	ctx := context.Background()
+	topic, err := pubsub.OpenTopic(ctx, "gcppubsub://eliben-test1/test1")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var pc *pbraw.PublisherClient
+	if topic.As(&pc) {
+		fmt.Println("converted")
+	}
+}
+
+func topicerroras() {
+	ctx := context.Background()
+	topic, err := pubsub.OpenTopic(ctx, "gcppubsub://eliben-test1/test100")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = topic.Send(ctx, &pubsub.Message{Body: []byte("hello")})
+	if err != nil {
+		var s *status.Status
+		if topic.ErrorAs(err, &s) {
+			fmt.Println(s.Code())
+		}
+		log.Fatal(err)
+	}
+}
+
 // To publish a message here, post a message to the subscription via the GCP
 // console
 func main() {
 	//rcv()
 	//msgas()
 	//subas()
-	suberroras()
+	//suberroras()
+	//send()
+	//topicas()
+	topicerroras()
 }
