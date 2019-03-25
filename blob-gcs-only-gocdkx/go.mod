@@ -2,4 +2,4 @@ module blobsample
 
 go 1.12
 
-require github.com/eliben/gocdkx v0.0.0-20190325165257-758a2cd273d0 // indirect
+require github.com/eliben/gocdkx v0.0.0-20190325174311-1fee65f7a32f
