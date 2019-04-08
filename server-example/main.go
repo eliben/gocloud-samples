@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -21,26 +22,23 @@ func (g GlobalMonitoredResource) MonitoredResource() (string, map[string]string)
 }
 
 func main() {
+	addr := flag.String("listen", ":8080", "HTTP port to listen on")
+
 	ctx := context.Background()
 	credentials, err := gcp.DefaultCredentials(ctx)
-	fmt.Println(credentials)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 	tokenSource := gcp.CredentialsTokenSource(credentials)
-	fmt.Println(tokenSource)
 
-	projectID, err := gcp.DefaultProjectID(credentials)
-	fmt.Println(projectID)
+	projectId, err := gcp.DefaultProjectID(credentials)
+	fmt.Printf("projectId = %s\n", projectId)
 	if err != nil {
 		log.Fatal(err)
 	}
-	mr := GlobalMonitoredResource{projectId: "eliben-test1"}
-	fmt.Println("mr", mr)
-
-	exporter, _, err := sdserver.NewExporter(projectID, tokenSource, mr)
-	fmt.Println("exporter", exporter)
+	mr := GlobalMonitoredResource{projectId: string(projectId)}
+	exporter, _, err := sdserver.NewExporter(projectId, tokenSource, mr)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/hello", func(w http.ResponseWriter, req *http.Request) {
@@ -59,6 +57,6 @@ func main() {
 	}
 
 	s := server.New(options)
-	fmt.Println("Server", s)
-	s.ListenAndServe("localhost:8080", mux)
+	fmt.Printf("Listening on %s\n", *addr)
+	s.ListenAndServe(*addr, mux)
 }
