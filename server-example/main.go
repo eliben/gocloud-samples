@@ -6,12 +6,19 @@ import (
 	"log"
 	"net/http"
 
-	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
 	"go.opencensus.io/trace"
 	"gocloud.dev/gcp"
 	"gocloud.dev/server"
 	"gocloud.dev/server/sdserver"
 )
+
+type GlobalMonitoredResource struct {
+	projectId string
+}
+
+func (g GlobalMonitoredResource) MonitoredResource() (string, map[string]string) {
+	return "global", map[string]string{"project_id": g.projectId}
+}
 
 func main() {
 	ctx := context.Background()
@@ -29,9 +36,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	mr := monitoredresource.Autodetect()
+	mr := GlobalMonitoredResource{projectId: "eliben-test1"}
 	fmt.Println("mr", mr)
+
 	exporter, _, err := sdserver.NewExporter(projectID, tokenSource, mr)
 	fmt.Println("exporter", exporter)
 
@@ -46,7 +53,7 @@ func main() {
 	options := &server.Options{
 		RequestLogger:         sdserver.NewRequestLogger(),
 		HealthChecks:          nil,
-		TraceExporter:         nil,
+		TraceExporter:         exporter,
 		DefaultSamplingPolicy: trace.AlwaysSample(),
 		Driver:                &server.DefaultDriver{},
 	}
