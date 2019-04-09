@@ -6,14 +6,14 @@ import (
 	"log"
 
 	"gocloud.dev/runtimevar"
-	_ "gocloud.dev/runtimevar/runtimeconfigurator"
+	_ "gocloud.dev/runtimevar/gcpruntimeconfig"
 	runtimeconfig "google.golang.org/genproto/googleapis/cloud/runtimeconfig/v1beta1"
 	"google.golang.org/grpc/status"
 )
 
 func snpsht() {
 	ctx := context.Background()
-	v, err := runtimevar.OpenVariable(ctx, "runtimeconfigurator://eliben-test1/eliben-testconfig/key1")
+	v, err := runtimevar.OpenVariable(ctx, "gcpruntimeconfig://eliben-test1/eliben-testconfig/key1")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,7 +33,7 @@ func snpsht() {
 
 func erroras() {
 	ctx := context.Background()
-	v, err := runtimevar.OpenVariable(ctx, "runtimeconfigurator://eliben-test1/eliben-teconfig/key1g")
+	v, err := runtimevar.OpenVariable(ctx, "gcpruntimeconfig://eliben-test1/eliben-teconfig/key1g")
 	if err != nil {
 		log.Fatal(err)
 	}
