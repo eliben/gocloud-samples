@@ -2,6 +2,6 @@ module blobsample
 
 go 1.12
 
-require gocloud.dev v0.11.0
+require gocloud.dev v0.12.0
 
-replace gocloud.dev => ../../gc2
+replace gocloud.dev => ../../gcclean
