@@ -22,7 +22,7 @@ func main() {
 		},
 	})
 	if _, err := client.Logical().Write("sys/mounts/transit", map[string]interface{}{"type": "transit"}); err != nil {
-		log.Fatal(err)
+		fmt.Println("Error while mounting:", err)
 	}
 	if err != nil {
 		log.Fatal(err)
