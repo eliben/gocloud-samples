@@ -21,11 +21,11 @@ func main() {
 			Address: "http://127.0.0.1:8200",
 		},
 	})
-	if _, err := client.Logical().Write("sys/mounts/transit", map[string]interface{}{"type": "transit"}); err != nil {
-		fmt.Println("Error while mounting:", err)
-	}
 	if err != nil {
 		log.Fatal(err)
+	}
+	if _, err := client.Logical().Write("sys/mounts/transit", map[string]interface{}{"type": "transit"}); err != nil {
+		fmt.Println("Error while mounting:", err)
 	}
 
 	// Construct a *secrets.Keeper.
