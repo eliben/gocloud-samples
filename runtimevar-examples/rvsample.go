@@ -49,5 +49,5 @@ func erroras() {
 
 func main() {
 	snpsht()
-	erroras()
+	//erroras()
 }
